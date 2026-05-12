@@ -1,0 +1,471 @@
+CẤU TRÚC THƯ MỤC (DIRECTORY TREE):
+=====================================
+📁 G&T_shop/
+    📄 .htaccess
+    📄 database.sql
+    📁 app/
+        📁 Controllers/
+            📄 HomeController.php
+            📄 ProductController.php
+        📁 Models/
+            📄 Database.php
+            📄 Product.php
+        📁 Views/
+            📁 admin/
+            📁 client/
+                📄 home.php
+                📄 product_detail.php
+                📁 layouts/
+                    📄 footer.php
+                    📄 header.php
+    📁 config/
+        📄 config.php
+    📁 public/
+        📄 index.php
+        📁 css/
+            📄 style.css
+        📁 images/
+        📁 js/
+
+
+NỘI DUNG CHI TIẾT CÁC TỆP (FILE CONTENTS):
+
+
+==================================================
+--- ĐƯỜNG DẪN TỆP (FILE PATH): .\database.sql ---
+==================================================
+
+-- Tạo cơ sở dữ liệu nếu chưa tồn tại và sử dụng nó
+CREATE DATABASE IF NOT EXISTS gtbookstore_db DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE gtbookstore_db;
+
+-- 1. Bảng Users (Người dùng)
+CREATE TABLE `users` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `fullname` varchar(100) NOT NULL,
+  `email` varchar(100) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `phone` varchar(15) DEFAULT NULL,
+  `address` text DEFAULT NULL,
+  `role` tinyint(1) DEFAULT 0 COMMENT '0: Khách hàng, 1: Quản trị viên',
+  `created_at` timestamp DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `email` (`email`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 2. Bảng Categories (Danh mục sản phẩm)
+CREATE TABLE `categories` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) NOT NULL,
+  `slug` varchar(100) NOT NULL,
+  `status` tinyint(1) DEFAULT 1 COMMENT '1: Hiển thị, 0: Ẩn',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `slug` (`slug`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 3. Bảng Products (Sản phẩm)
+CREATE TABLE `products` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `category_id` int(11) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `slug` varchar(255) NOT NULL,
+  `description` text DEFAULT NULL,
+  `price` int(11) NOT NULL,
+  `image` varchar(255) DEFAULT 'default.jpg',
+  `stock_quantity` int(11) DEFAULT 0,
+  `created_at` timestamp DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  KEY `category_id` (`category_id`),
+  CONSTRAINT `fk_product_category` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 4. Bảng Orders (Đơn hàng)
+CREATE TABLE `orders` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL,
+  `total_amount` int(11) NOT NULL,
+  `shipping_address` text NOT NULL,
+  `status` tinyint(1) DEFAULT 0 COMMENT '0: Chờ xử lý, 1: Đang giao, 2: Đã giao, 3: Đã hủy',
+  `created_at` timestamp DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`),
+  CONSTRAINT `fk_order_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 5. Bảng Order_Details (Chi tiết đơn hàng)
+CREATE TABLE `order_details` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `order_id` int(11) NOT NULL,
+  `product_id` int(11) NOT NULL,
+  `quantity` int(11) NOT NULL,
+  `price` int(11) NOT NULL COMMENT 'Giá tại thời điểm mua',
+  PRIMARY KEY (`id`),
+  KEY `order_id` (`order_id`),
+  KEY `product_id` (`product_id`),
+  CONSTRAINT `fk_detail_order` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_detail_product` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Thêm danh mục mẫu
+INSERT INTO `categories` (`id`, `name`, `slug`, `status`) VALUES
+(1, 'Sách Học Thuật', 'sach-hoc-thuat', 1),
+(2, 'Văn Phòng Phẩm', 'van-phong-pham', 1),
+(3, 'Đồ Chơi Giáo Dục', 'do-choi-giao-duc', 1);
+
+-- Thêm sản phẩm mẫu
+INSERT INTO `products` (`id`, `category_id`, `title`, `slug`, `description`, `price`, `image`, `stock_quantity`) VALUES
+(1, 1, 'Lập Trình PHP & MySQL Cơ Bản', 'lap-trinh-php-mysql', 'Sách hướng dẫn lập trình web cơ bản.', 150000, 'php-book.jpg', 50),
+(2, 2, 'Bút Bi Thiên Long', 'but-bi-thien-long', 'Bút mực xanh, viết êm.', 5000, 'but-bi.jpg', 500),
+(3, 2, 'Sổ Tay Sinh Viên', 'so-tay-sinh-vien', 'Sổ tay bìa da cao cấp.', 45000, 'so-tay.jpg', 100),
+(4, 3, 'Khối Rubik 3x3', 'khoi-rubik-3x3', 'Đồ chơi phát triển trí tuệ.', 35000, 'rubik.jpg', 30);
+
+-- Thêm tài khoản Admin (Mật khẩu: 123456 - Cần mã hóa MD5/Bcrypt trong thực tế)
+INSERT INTO `users` (`fullname`, `email`, `password`, `phone`, `role`) VALUES
+('Quản Trị Viên', 'admin@gtshop.com', '123456', '0987654321', 1),
+('Khách Hàng', 'khachhang@gmail.com', '123456', '0123456789', 0);
+
+==================================================
+--- ĐƯỜNG DẪN TỆP (FILE PATH): .\app\Controllers\HomeController.php ---
+==================================================
+
+<?php
+namespace App\Controllers;
+
+require_once '../app/Models/Database.php';
+require_once '../app/Models/Product.php';
+
+use App\Models\Database;
+use App\Models\Product;
+
+class HomeController {
+    public function index() {
+        // 1. Kết nối CSDL
+        $database = new Database();
+        $db = $database->getConnection();
+
+        // 2. Khởi tạo Product Model và truyền kết nối vào
+        $productModel = new Product($db);
+        
+        // 3. Lấy danh sách sản phẩm
+        // Gán mảng rỗng [] nếu CSDL chưa có bảng/dữ liệu để frontend không bị crash
+        $products = [];
+        try {
+            $products = $productModel->getAllProducts();
+        } catch (\Exception $e) {
+            // Tạm thời bỏ qua lỗi nếu chưa tạo bảng 'products' trong MySQL
+        }
+
+        // 4. Gọi View (Lúc này biến $products đã tồn tại và được truyền ngầm xuống View)
+        require_once '../app/Views/client/home.php';
+    }
+}
+?>
+
+==================================================
+--- ĐƯỜNG DẪN TỆP (FILE PATH): .\app\Controllers\ProductController.php ---
+==================================================
+
+<?php
+namespace App\Controllers;
+
+require_once '../app/Models/Database.php';
+require_once '../app/Models/Product.php';
+
+use App\Models\Database;
+use App\Models\Product;
+
+class ProductController {
+    
+    public function index() {
+        echo "<h1>Đây là trang Danh sách Sản phẩm (Sách, Văn phòng phẩm...)</h1>";
+    }
+
+    public function detail() {
+        // Lấy ID sản phẩm từ URL, mặc định là 0 nếu không có
+        $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+        
+        if ($id > 0) {
+            // Khởi tạo kết nối DB và Model
+            $database = new Database();
+            $db = $database->getConnection();
+            $productModel = new Product($db);
+
+            // Lấy thông tin sản phẩm
+            $product = $productModel->getProductById($id);
+
+            if ($product) {
+                // Gọi View hiển thị chi tiết
+                require_once '../app/Views/client/product_detail.php';
+            } else {
+                echo "<h1 style='text-align:center; margin-top:50px;'>Sản phẩm không tồn tại!</h1>";
+            }
+        } else {
+            echo "<h1 style='text-align:center; margin-top:50px;'>ID sản phẩm không hợp lệ!</h1>";
+        }
+    }
+}
+?>
+
+==================================================
+--- ĐƯỜNG DẪN TỆP (FILE PATH): .\app\Models\Database.php ---
+==================================================
+
+<?php
+namespace App\Models;
+
+use PDO;
+use PDOException;
+
+class Database {
+    // Khai báo rõ kiểu dữ liệu 'string' cho các biến chuỗi
+    private string $host = DB_HOST;
+    private string $user = DB_USER;
+    private string $pass = DB_PASS;
+    private string $dbname = DB_NAME;
+    
+    // Khai báo kiểu '?PDO' (có thể là đối tượng PDO hoặc null)
+    protected ?PDO $conn = null;
+
+    public function __construct() {
+        $this->connect();
+    }
+
+    private function connect() {
+        $dsn = "mysql:host=" . $this->host . ";dbname=" . $this->dbname . ";charset=utf8mb4";
+        $options = [
+            PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+            PDO::ATTR_EMULATE_PREPARES   => false,
+        ];
+
+        try {
+            $this->conn = new PDO($dsn, $this->user, $this->pass, $options);
+        } catch (PDOException $e) {
+            die("Lỗi kết nối Cơ sở dữ liệu: " . $e->getMessage());
+        }
+    }
+    
+    public function getConnection() {
+        return $this->conn;
+    }
+}
+?>
+
+==================================================
+--- ĐƯỜNG DẪN TỆP (FILE PATH): .\app\Models\Product.php ---
+==================================================
+
+<?php
+namespace App\Models;
+
+use PDO;
+
+class Product {
+    private ?PDO $conn = null;
+
+    // Khai báo rõ kiểu dữ liệu PDO cho tham số $dbConnection
+    public function __construct(PDO $dbConnection) {
+        $this->conn = $dbConnection;
+    }
+
+    public function getAllProducts() {
+        $stmt = $this->conn->prepare("SELECT * FROM products ORDER BY id DESC");
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // Khai báo rõ kiểu dữ liệu int cho tham số $id
+    public function getProductById(int $id) {
+        $stmt = $this->conn->prepare("SELECT * FROM products WHERE id = :id LIMIT 1");
+        $stmt->execute(['id' => $id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+}
+?>
+
+==================================================
+--- ĐƯỜNG DẪN TỆP (FILE PATH): .\app\Views\client\home.php ---
+==================================================
+
+<?php 
+/** @var array $products */ 
+// Chú thích trên giúp trình kiểm tra mã (IDE) hiểu biến $products là một mảng được truyền từ Controller
+?>
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hiệu Sách & Văn Phòng Phẩm</title>
+    <link rel="stylesheet" href="<?= BASE_URL ?>css/style.css">
+</head>
+<body>
+    <?php include 'layouts/header.php'; ?>
+
+    <main class="container">
+        <h1>Sản Phẩm Mới Nhất</h1>
+        <div class="product-grid">
+            <?php foreach ($products as $p): ?>
+                <div class="product-card">
+                    <img src="<?= BASE_URL ?>images/<?= htmlspecialchars($p['image']) ?>" alt="<?= htmlspecialchars($p['title']) ?>">
+                    <a href="<?= BASE_URL ?>index.php?controller=product&action=detail&id=<?= $p['id'] ?>" style="text-decoration: none;">
+                        <h3><?= htmlspecialchars($p['title']) ?></h3>
+                    </a>
+                    <p class="price"><?= number_format($p['price'], 0, ',', '.') ?> VNĐ</p>
+                    <button class="btn-add-cart">Thêm vào giỏ</button>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    </main>
+
+    <?php include 'layouts/footer.php'; ?>
+</body>
+</html>
+
+==================================================
+--- ĐƯỜNG DẪN TỆP (FILE PATH): .\app\Views\client\product_detail.php ---
+==================================================
+
+<?php 
+/** @var array $product */ 
+// Chú thích trên giúp trình kiểm tra mã hiểu biến $product là một mảng được truyền từ Controller
+?>
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?= htmlspecialchars($product['title']) ?> - G&T Shop</title>
+    <link rel="stylesheet" href="/G&T_shop/public/css/style.css">
+</head>
+<body>
+    <?php include 'layouts/header.php'; ?>
+
+    <main class="container">
+        <div class="breadcrumb">
+            <a href="<?= BASE_URL ?>index.php">Trang Chủ</a> > 
+            <a href="<?= BASE_URL ?>index.php?controller=product">Sản Phẩm</a> > 
+            <span><?= htmlspecialchars($product['title']) ?></span>
+        </div>
+
+        <div class="product-detail-wrapper">
+            <div class="product-image-large">
+                <img src="/G&T_shop/public/images/<?= htmlspecialchars($product['image']) ?>" alt="<?= htmlspecialchars($product['title']) ?>">
+            </div>
+
+            <div class="product-info-detail">
+                <h1><?= htmlspecialchars($product['title']) ?></h1>
+                <p class="price-large"><?= number_format($product['price'], 0, ',', '.') ?> VNĐ</p>
+                
+                <div class="description">
+                    <h3>Mô tả sản phẩm:</h3>
+                    <p><?= nl2br(htmlspecialchars($product['description'])) ?></p>
+                </div>
+                
+                <p class="stock">Kho: <strong><?= $product['stock_quantity'] ?></strong> sản phẩm</p>
+
+                <form action="<?= BASE_URL ?>index.php?controller=cart&action=add" method="POST" class="add-to-cart-form">
+                    <input type="hidden" name="product_id" value="<?= $product['id'] ?>">
+                    
+                    <div class="quantity-control">
+                        <label for="qty">Số lượng:</label>
+                        <input type="number" id="qty" name="quantity" value="1" min="1" max="<?= $product['stock_quantity'] ?>">
+                    </div>
+                    
+                    <button type="submit" class="btn-add-cart large">Thêm vào giỏ hàng</button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <?php include 'layouts/footer.php'; ?>
+</body>
+</html>
+
+==================================================
+--- ĐƯỜNG DẪN TỆP (FILE PATH): .\app\Views\client\layouts\footer.php ---
+==================================================
+
+<footer>
+    <div class="container">
+        <p>&copy; 2026 G&T Shop - Hệ thống phân phối Sách & Văn Phòng Phẩm.</p>
+        <p>Địa chỉ: Thủ Dầu Một, Bình Dương</p>
+    </div>
+</footer>
+
+==================================================
+--- ĐƯỜNG DẪN TỆP (FILE PATH): .\app\Views\client\layouts\header.php ---
+==================================================
+
+<header>
+    <div class="container">
+        <a href="<?= BASE_URL ?>index.php" class="logo">G&T Shop</a>
+        
+        <nav class="nav-links">
+            <a href="<?= BASE_URL ?>index.php">Trang Chủ</a>
+            <a href="<?= BASE_URL ?>index.php?controller=product">Sản Phẩm</a>
+            <a href="<?= BASE_URL ?>index.php?controller=cart">Giỏ Hàng (0)</a>
+            <a href="<?= BASE_URL ?>index.php?controller=user&action=login">Đăng Nhập</a>
+        </nav>
+    </div>
+</header>
+
+==================================================
+--- ĐƯỜNG DẪN TỆP (FILE PATH): .\config\config.php ---
+==================================================
+
+<?php
+define('DB_HOST', 'localhost');
+define('DB_USER', 'root');
+define('DB_PASS', '');
+define('DB_NAME', 'gtbookstore_db');
+
+define('BASE_URL', 'http://localhost/G&T_shop/public/');
+?>
+
+==================================================
+--- ĐƯỜNG DẪN TỆP (FILE PATH): .\public\index.php ---
+==================================================
+
+<?php
+// Khởi tạo session cho giỏ hàng và đăng nhập
+session_start(); 
+
+require_once '../config/config.php';
+
+// Tự động nạp các tệp Controller cần thiết
+require_once '../app/Controllers/HomeController.php';
+require_once '../app/Controllers/ProductController.php';
+
+use App\Controllers\HomeController;
+use App\Controllers\ProductController;
+
+// Lấy tham số điều hướng từ URL một cách an toàn
+$controllerName = isset($_GET['controller']) ? $_GET['controller'] : 'home';
+$actionName = isset($_GET['action']) ? $_GET['action'] : 'index';
+
+// Khởi tạo routing
+switch ($controllerName) {
+    case 'home':
+        $controller = new HomeController();
+        if (method_exists($controller, $actionName)) {
+            $controller->$actionName();
+        } else {
+            echo "404 - Hành động không tồn tại!";
+        }
+        break;
+
+    case 'product':
+        $controller = new ProductController();
+        if (method_exists($controller, $actionName)) {
+            $controller->$actionName();
+        } else {
+            echo "404 - Hành động không tồn tại!";
+        }
+        break;
+
+    default:
+        echo "404 - Trang không tồn tại (Not Found)";
+        break;
+}
+?>
