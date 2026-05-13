@@ -37,5 +37,38 @@ class ProductController {
             require_once '../app/Views/errors/404.php';
         }
     }
+
+    // Trả về JSON cho tính năng AJAX Suggestion
+    public function suggest() {
+        header('Content-Type: application/json');
+        
+        // Lấy từ khóa, mặc định là rỗng
+        $q = isset($_GET['q']) ? trim($_GET['q']) : '';
+        
+        // Yêu cầu gõ ít nhất 2 ký tự mới tìm kiếm để giảm tải Server
+        if (mb_strlen($q) < 2) {
+            echo json_encode([]);
+            return;
+        }
+
+        $database = new Database();
+        $db = $database->getConnection();
+        $productModel = new Product($db);
+
+        $results = $productModel->searchProducts($q);
+
+        // Format lại mảng dữ liệu để nhúng vào HTML bằng JS
+        $output = array_map(function($p) {
+            return [
+                'id'        => $p['id'],
+                'name'      => $p['name'],
+                'slug'      => $p['slug'],
+                'price_fmt' => formatPrice((int)$p['display_price']), // Đã có trong config.php
+            ];
+        }, $results);
+
+        // Giữ nguyên định dạng Unicode tiếng Việt
+        echo json_encode($output, JSON_UNESCAPED_UNICODE);
+    }
 }
 ?>

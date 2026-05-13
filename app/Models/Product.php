@@ -43,5 +43,28 @@ class Product {
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function searchProducts(string $keyword) {
+        // Kết hợp FULLTEXT SEARCH và LIKE để tối ưu kết quả tìm kiếm
+        $stmt = $this->conn->prepare("
+            SELECT id, name, slug, COALESCE(sale_price, price) AS display_price
+            FROM products 
+            WHERE is_active = 1 
+              AND (
+                  MATCH(name, description, author) AGAINST(:keyword IN BOOLEAN MODE)
+                  OR name LIKE :like_keyword
+              )
+            ORDER BY sold_count DESC 
+            LIMIT 8
+        ");
+        
+        // Thêm '*' cho Fulltext để tìm cả những từ đang gõ dở
+        $stmt->execute([
+            'keyword' => $keyword . '*',
+            'like_keyword' => "%$keyword%"
+        ]);
+        
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
 ?>

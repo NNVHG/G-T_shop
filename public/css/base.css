@@ -79,3 +79,30 @@ ul { list-style: none; }
 /* ── BUTTONS & UTILS ── */
 .btn-primary { display: inline-flex; align-items: center; gap: 6px; background: var(--amber); color: var(--brown-dark); border: none; padding: 12px 26px; border-radius: var(--radius-md); font-weight: 500; transition: all var(--transition); }
 .btn-primary:hover { background: #F5B53A; transform: translateY(-1px); }
+/* ── KHUNG GỢI Ý TÌM KIẾM AJAX ── */
+.search-suggest {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0; right: 0;
+    background: var(--white);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+    z-index: 200;
+    max-height: 320px;
+    overflow-y: auto;
+    display: none; /* Ẩn mặc định */
+    border: 1px solid var(--border);
+}
+.search-suggest.open { display: block; }
+.suggest-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 14px;
+    font-size: 14px;
+    cursor: pointer;
+    border-bottom: 1px solid var(--border);
+    transition: background var(--transition);
+}
+.suggest-item:last-child { border-bottom: none; }
+.suggest-item:hover { background: var(--cream-2); color: var(--amber-dark); }
+.suggest-item i { color: var(--text-light); font-size: 16px; }
+.suggest-price { margin-left: auto; font-weight: bold; color: var(--amber-dark); }

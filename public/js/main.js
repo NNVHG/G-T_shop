@@ -79,7 +79,7 @@ document.addEventListener('click', async function (e) {
     );
 });
 
-// ── Tìm kiếm AJAX (gợi ý real-time) ─────────────────────────
+// ── Tìm kiếm AJAX (gợi ý real-time) MVC ─────────────────────────
 (function () {
     const input   = document.querySelector('.search-input');
     const suggest = document.getElementById('searchSuggest');
@@ -95,25 +95,27 @@ document.addEventListener('click', async function (e) {
 
         timer = setTimeout(async () => {
             try {
-                const res  = await fetch(`/gt_shop/search_suggest.php?q=${encodeURIComponent(q)}`);
+                // Gọi API vào Controller MVC
+                const res  = await fetch(`/G&T_shop/public/index.php?controller=product&action=suggest&q=${encodeURIComponent(q)}`);
                 const data = await res.json();
 
                 if (!data.length) { suggest.classList.remove('open'); return; }
 
+                // Hiển thị dữ liệu và tạo liên kết đến Trang Chi Tiết
                 suggest.innerHTML = data.map(p => `
-                    <div class="suggest-item" onclick="location.href='/gt_shop/product.php?slug=${p.slug}'">
-                        <i class="ti ti-book"></i>
+                    <div class="suggest-item" onclick="location.href='/G&T_shop/public/index.php?controller=product&action=detail&id=${p.id}'">
+                        <i class="ti ti-search"></i>
                         <span>${p.name}</span>
                         <span class="suggest-price">${p.price_fmt}</span>
                     </div>
                 `).join('');
 
                 suggest.classList.add('open');
-            } catch { /* bỏ qua lỗi mạng */ }
-        }, 280); // debounce 280ms
+            } catch { /* Bỏ qua nếu lỗi mạng */ }
+        }, 280); // Debounce 280ms để chống spam Server
     });
 
-    // Đóng khi click ra ngoài
+    // Ẩn bảng gợi ý khi click ra ngoài
     document.addEventListener('click', function (e) {
         if (!e.target.closest('.search-bar')) {
             suggest.classList.remove('open');

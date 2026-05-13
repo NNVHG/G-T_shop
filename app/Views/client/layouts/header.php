@@ -9,7 +9,10 @@
                 <input type="hidden" name="controller" value="product">
                 <input type="hidden" name="action" value="search">
                 <i class="ti ti-search search-icon"></i>
-                <input type="text" name="q" class="search-input" placeholder="Tìm sách, đồ dùng, snack...">
+                
+                <input type="text" name="q" class="search-input" placeholder="Tìm sách, đồ dùng, snack..." autocomplete="off">
+                
+                <div id="searchSuggest" class="search-suggest"></div>
             </form>
 
             <div class="header-actions">
