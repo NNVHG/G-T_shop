@@ -154,7 +154,13 @@
                         location.reload();
                     }
                 } else {
-                    alert(data.message || 'Có lỗi xảy ra');
+                    if (data.redirect) {
+                        if (confirm(data.message + "\nBạn có muốn chuyển đến trang đăng nhập không?")) {
+                            window.location.href = data.redirect;
+                        }
+                    } else {
+                        alert(data.message || 'Có lỗi xảy ra');
+                    }
                 }
             });
         }

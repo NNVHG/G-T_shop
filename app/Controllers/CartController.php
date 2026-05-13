@@ -31,6 +31,11 @@ class CartController {
     public function add() {
         header('Content-Type: application/json');
         
+        if (!isset($_SESSION['user'])) {
+            echo json_encode(['success' => false, 'redirect' => BASE_URL . 'index.php?controller=auth&action=login', 'message' => 'Vui lòng đăng nhập để thêm vào giỏ hàng!']);
+            return;
+        }
+
         $product_id = isset($_POST['product_id']) ? (int)$_POST['product_id'] : 0;
         $qty = isset($_POST['qty']) ? max(1, (int)$_POST['qty']) : 1;
 
