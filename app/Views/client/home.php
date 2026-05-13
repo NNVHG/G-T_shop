@@ -1,5 +1,5 @@
 <?php
-/** * @var array $banners
+/** * @var array $banners 
  * @var array $categories
  * @var array $featured
  * @var array $newest
@@ -91,7 +91,9 @@
                                     <?php else: ?>
                                         <span class="price-current"><?= formatPrice((int)$p['price']) ?></span>
                                     <?php endif; ?>
-                                    <button class="btn-add-cart"><i class="ti ti-shopping-cart-plus"></i></button>
+                                    <button class="btn-add-cart" data-id="<?= $p['id'] ?>">
+                                        <i class="ti ti-shopping-cart-plus"></i>
+                                    </button>
                                 </div>
                             </div>
                         </div>

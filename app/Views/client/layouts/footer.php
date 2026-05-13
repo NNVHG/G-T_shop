@@ -1,4 +1,7 @@
-<?php // includes/footer.php ?>
+<?php
+/** * @var array $nav_categories 
+ */
+?>
 </main><!-- /site-main -->
 
 <!-- ═══════════════════════════════════════════════════════════
