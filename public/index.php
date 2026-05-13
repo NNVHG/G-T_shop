@@ -22,7 +22,9 @@ switch ($controllerName) {
         if (method_exists($controller, $actionName)) {
             $controller->$actionName();
         } else {
-            echo "404 - Hành động không tồn tại!";
+            // Lỗi 404: Không tìm thấy phương thức trong HomeController
+            $errorMessage = "Hành động (Action) '$actionName' không tồn tại trong HomeController!";
+            require_once '../app/Views/errors/404.php';
         }
         break;
 
@@ -31,12 +33,16 @@ switch ($controllerName) {
         if (method_exists($controller, $actionName)) {
             $controller->$actionName();
         } else {
-            echo "404 - Hành động không tồn tại!";
+            // Lỗi 404: Không tìm thấy phương thức trong ProductController
+            $errorMessage = "Hành động (Action) '$actionName' không tồn tại trong ProductController!";
+            require_once '../app/Views/errors/404.php';
         }
         break;
 
     default:
-        echo "404 - Trang không tồn tại (Not Found)";
+        // Lỗi 404: Không tìm thấy Controller
+        $errorMessage = "Bộ điều khiển (Controller) '$controllerName' không tồn tại trên hệ thống!";
+        require_once '../app/Views/errors/404.php';
         break;
 }
 ?>

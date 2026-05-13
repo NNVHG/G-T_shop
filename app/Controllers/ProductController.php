@@ -18,22 +18,23 @@ class ProductController {
         $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
         
         if ($id > 0) {
-            // Khởi tạo kết nối DB và Model
             $database = new Database();
             $db = $database->getConnection();
             $productModel = new Product($db);
 
-            // Lấy thông tin sản phẩm
             $product = $productModel->getProductById($id);
 
             if ($product) {
-                // Gọi View hiển thị chi tiết
                 require_once '../app/Views/client/product_detail.php';
             } else {
-                echo "<h1 style='text-align:center; margin-top:50px;'>Sản phẩm không tồn tại!</h1>";
+                // Gọi 404 khi truy vấn ID không có trong MySQL
+                $errorMessage = "Không tìm thấy sản phẩm có ID: $id trong Cơ sở dữ liệu!";
+                require_once '../app/Views/errors/404.php';
             }
         } else {
-            echo "<h1 style='text-align:center; margin-top:50px;'>ID sản phẩm không hợp lệ!</h1>";
+            // Gọi 404 khi người dùng nhập ID là chữ hoặc ID âm
+            $errorMessage = "ID sản phẩm không hợp lệ (ID=$id)! Vui lòng kiểm tra lại URL.";
+            require_once '../app/Views/errors/404.php';
         }
     }
 }

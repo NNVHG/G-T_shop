@@ -1,0 +1,81 @@
+/* ============================================================
+   G&T Shop — Base CSS (Dùng chung)
+============================================================ */
+:root {
+    --brown-dark:   #2C1A0E;
+    --brown-mid:    #3B2010;
+    --brown-light:  #5C3317;
+    --amber:        #EF9F27;
+    --amber-dark:   #BA7517;
+    --amber-light:  #FAEEDA;
+    --cream:        #FDFAF5;
+    --cream-2:      #F5F0E8;
+    --text-main:    #2C2C2A;
+    --text-muted:   #5F5E5A;
+    --text-light:   #888780;
+    --border:       #D3D1C7;
+    --white:        #fff;
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 14px;
+    --shadow-md: 0 4px 16px rgba(44,26,14,.12);
+    --transition: .18s ease;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--text-main); font-size: 15px; line-height: 1.6; }
+a { text-decoration: none; color: inherit; }
+img { max-width: 100%; display: block; }
+ul { list-style: none; }
+.container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+
+/* ── HEADER & TOPBAR ── */
+.site-header { background: var(--brown-dark); position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 12px rgba(0,0,0,.25); }
+.header-top { border-bottom: 1px solid rgba(255,255,255,0.1); padding: 15px 0; }
+.header-inner { display: flex; align-items: center; justify-content: space-between; gap: 30px; }
+.logo { display: flex; align-items: baseline; gap: 3px; flex-shrink: 0; }
+.logo-gt { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 700; color: var(--amber); }
+.logo-shop { font-size: 20px; color: rgba(255,255,255,.5); }
+
+.search-bar { flex: 1; max-width: 600px; position: relative; display: flex; align-items: center; }
+.search-icon { position: absolute; left: 15px; color: #aaa; font-size: 18px; }
+.search-input { width: 100%; padding: 12px 15px 12px 45px; border-radius: 8px; border: none; background: #2A170F; color: white; font-size: 16px; outline: none; }
+.search-input::placeholder { color: #888; }
+
+.header-actions { display: flex; align-items: center; gap: 25px; }
+.action-btn { display: flex; align-items: center; gap: 8px; font-size: 16px; color: rgba(255,255,255,.75); transition: color var(--transition); }
+.action-btn:hover { color: var(--amber); }
+.cart-btn { position: relative; font-size: 24px; color: var(--amber); }
+.cart-badge { position: absolute; top: -8px; right: -10px; background: var(--amber); color: var(--brown-dark); font-size: 12px; font-weight: bold; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; border-radius: 50%; }
+
+.header-nav { padding: 15px 0; background: var(--brown-mid); }
+.nav-inner { display: flex; gap: 30px; overflow-x: auto; }
+.nav-item { color: rgba(255,255,255,0.8); font-weight: 500; font-size: 15px; display: flex; align-items: center; gap: 6px; white-space: nowrap; transition: 0.3s; }
+.nav-item:hover, .nav-item.active { color: var(--amber); }
+
+/* ── FOOTER ── */
+.site-footer { background: var(--brown-dark); margin-top: 40px; color: rgba(255,255,255,.6); }
+.footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1.2fr; gap: 40px; padding: 48px 20px 36px; }
+.footer-logo { font-family: 'Playfair Display', serif; font-size: 24px; color: var(--amber); margin-bottom: 14px; }
+.footer-logo span { color: rgba(255,255,255,.5); font-size: 14px; font-family: 'DM Sans',sans-serif; }
+.footer-desc { font-size: 13px; line-height: 1.7; margin-bottom: 16px; }
+.footer-socials { display: flex; gap: 10px; }
+.footer-socials a { width: 36px; height: 36px; border: 1px solid rgba(255,255,255,.15); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,.5); transition: all var(--transition); }
+.footer-socials a:hover { border-color: var(--amber); color: var(--amber); }
+.footer-title { font-size: 14px; font-weight: 500; color: #fff; margin-bottom: 14px; }
+.footer-links li { margin-bottom: 9px; }
+.footer-links a { font-size: 13px; transition: color var(--transition); }
+.footer-links a:hover { color: var(--amber); }
+.footer-contact li { display: flex; gap: 8px; font-size: 13px; margin-bottom: 10px; }
+.footer-contact i { color: var(--amber); font-size: 15px; }
+
+.footer-bottom { border-top: 1px solid rgba(255,255,255,.07); padding: 16px 20px; }
+.footer-bottom-inner { display: flex; align-items: center; justify-content: space-between; }
+.footer-payment { display: flex; gap: 8px; align-items: center; }
+.footer-payment img { height: 22px; filter: brightness(0.6); }
+.pay-tag { background: rgba(255,255,255,.1); font-size: 11px; padding: 3px 10px; border-radius: 4px; }
+
+/* ── BUTTONS & UTILS ── */
+.btn-primary { display: inline-flex; align-items: center; gap: 6px; background: var(--amber); color: var(--brown-dark); border: none; padding: 12px 26px; border-radius: var(--radius-md); font-weight: 500; transition: all var(--transition); }
+.btn-primary:hover { background: #F5B53A; transform: translateY(-1px); }

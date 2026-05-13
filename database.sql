@@ -1,88 +1,110 @@
--- Tạo cơ sở dữ liệu nếu chưa tồn tại và sử dụng nó
-CREATE DATABASE IF NOT EXISTS gtbookstore_db DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE gtbookstore_db;
+CREATE TABLE IF NOT EXISTS categories (
+    id         INT AUTO_INCREMENT PRIMARY KEY,
+    name       VARCHAR(100)  NOT NULL,
+    slug       VARCHAR(100)  NOT NULL UNIQUE,
+    icon       VARCHAR(50)   DEFAULT 'ti-tag',
+    sort_order INT           DEFAULT 0,
+    created_at TIMESTAMP     DEFAULT CURRENT_TIMESTAMP
+);
 
--- 1. Bảng Users (Người dùng)
-CREATE TABLE `users` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `fullname` varchar(100) NOT NULL,
-  `email` varchar(100) NOT NULL,
-  `password` varchar(255) NOT NULL,
-  `phone` varchar(15) DEFAULT NULL,
-  `address` text DEFAULT NULL,
-  `role` tinyint(1) DEFAULT 0 COMMENT '0: Khách hàng, 1: Quản trị viên',
-  `created_at` timestamp DEFAULT current_timestamp(),
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE IF NOT EXISTS products (
+    id           INT AUTO_INCREMENT PRIMARY KEY,
+    category_id  INT           NOT NULL,
+    name         VARCHAR(200)  NOT NULL,
+    slug         VARCHAR(200)  NOT NULL UNIQUE,
+    description  TEXT,
+    author       VARCHAR(100),
+    price        INT           NOT NULL,
+    sale_price   INT           DEFAULT NULL,
+    stock        INT           DEFAULT 0,
+    image        VARCHAR(255)  DEFAULT 'default.jpg',
+    badge        ENUM('','new','hot','sale') DEFAULT '',
+    rating       DECIMAL(2,1)  DEFAULT 0.0,
+    sold_count   INT           DEFAULT 0,
+    is_featured  TINYINT(1)    DEFAULT 0,
+    is_active    TINYINT(1)    DEFAULT 1,
+    created_at   TIMESTAMP     DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE CASCADE,
+    FULLTEXT KEY ft_search (name, description, author)
+);
 
--- 2. Bảng Categories (Danh mục sản phẩm)
-CREATE TABLE `categories` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(100) NOT NULL,
-  `slug` varchar(100) NOT NULL,
-  `status` tinyint(1) DEFAULT 1 COMMENT '1: Hiển thị, 0: Ẩn',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `slug` (`slug`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE IF NOT EXISTS users (
+    id         INT AUTO_INCREMENT PRIMARY KEY,
+    name       VARCHAR(100)  NOT NULL,
+    email      VARCHAR(150)  NOT NULL UNIQUE,
+    password   VARCHAR(255)  NOT NULL,
+    phone      VARCHAR(20),
+    address    TEXT,
+    role       ENUM('user','admin') DEFAULT 'user',
+    created_at TIMESTAMP     DEFAULT CURRENT_TIMESTAMP
+);
 
--- 3. Bảng Products (Sản phẩm)
-CREATE TABLE `products` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `category_id` int(11) NOT NULL,
-  `title` varchar(255) NOT NULL,
-  `slug` varchar(255) NOT NULL,
-  `description` text DEFAULT NULL,
-  `price` int(11) NOT NULL,
-  `image` varchar(255) DEFAULT 'default.jpg',
-  `stock_quantity` int(11) DEFAULT 0,
-  `created_at` timestamp DEFAULT current_timestamp(),
-  PRIMARY KEY (`id`),
-  KEY `category_id` (`category_id`),
-  CONSTRAINT `fk_product_category` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE IF NOT EXISTS orders (
+    id           INT AUTO_INCREMENT PRIMARY KEY,
+    user_id      INT           DEFAULT NULL,
+    customer_name VARCHAR(100) NOT NULL,
+    phone        VARCHAR(20)   NOT NULL,
+    address      TEXT          NOT NULL,
+    total        INT           NOT NULL,
+    status       ENUM('pending','processing','shipped','done','cancelled') DEFAULT 'pending',
+    note         TEXT,
+    created_at   TIMESTAMP     DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
+);
 
--- 4. Bảng Orders (Đơn hàng)
-CREATE TABLE `orders` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `user_id` int(11) NOT NULL,
-  `total_amount` int(11) NOT NULL,
-  `shipping_address` text NOT NULL,
-  `status` tinyint(1) DEFAULT 0 COMMENT '0: Chờ xử lý, 1: Đang giao, 2: Đã giao, 3: Đã hủy',
-  `created_at` timestamp DEFAULT current_timestamp(),
-  PRIMARY KEY (`id`),
-  KEY `user_id` (`user_id`),
-  CONSTRAINT `fk_order_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE IF NOT EXISTS order_items (
+    id         INT AUTO_INCREMENT PRIMARY KEY,
+    order_id   INT NOT NULL,
+    product_id INT NOT NULL,
+    qty        INT NOT NULL,
+    price      INT NOT NULL,
+    FOREIGN KEY (order_id)   REFERENCES orders(id)   ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
+);
 
--- 5. Bảng Order_Details (Chi tiết đơn hàng)
-CREATE TABLE `order_details` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `order_id` int(11) NOT NULL,
-  `product_id` int(11) NOT NULL,
-  `quantity` int(11) NOT NULL,
-  `price` int(11) NOT NULL COMMENT 'Giá tại thời điểm mua',
-  PRIMARY KEY (`id`),
-  KEY `order_id` (`order_id`),
-  KEY `product_id` (`product_id`),
-  CONSTRAINT `fk_detail_order` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `fk_detail_product` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE IF NOT EXISTS banners (
+    id         INT AUTO_INCREMENT PRIMARY KEY,
+    title      VARCHAR(200),
+    subtitle   VARCHAR(200),
+    btn_text   VARCHAR(50)  DEFAULT 'Xem ngay',
+    btn_link   VARCHAR(255) DEFAULT '#',
+    bg_color   VARCHAR(20)  DEFAULT '#2C1A0E',
+    is_active  TINYINT(1)   DEFAULT 1,
+    sort_order INT          DEFAULT 0
+);
 
--- Thêm danh mục mẫu
-INSERT INTO `categories` (`id`, `name`, `slug`, `status`) VALUES
-(1, 'Sách Học Thuật', 'sach-hoc-thuat', 1),
-(2, 'Văn Phòng Phẩm', 'van-phong-pham', 1),
-(3, 'Đồ Chơi Giáo Dục', 'do-choi-giao-duc', 1);
+INSERT INTO categories (name, slug, icon, sort_order) VALUES
+('Sách văn học',    'sach-van-hoc',    'ti-book',              1),
+('Truyện tranh',    'truyen-tranh',    'ti-device-gamepad-2',  2),
+('Văn phòng phẩm',  'van-phong-pham',  'ti-pencil',            3),
+('Đồ ăn vặt',       'do-an-vat',       'ti-candy',             4),
+('Nước ngọt',       'nuoc-ngot',       'ti-bottle',            5),
+('Đồ chơi',         'do-choi',         'ti-puzzle',            6);
 
--- Thêm sản phẩm mẫu
-INSERT INTO `products` (`id`, `category_id`, `title`, `slug`, `description`, `price`, `image`, `stock_quantity`) VALUES
-(1, 1, 'Lập Trình PHP & MySQL Cơ Bản', 'lap-trinh-php-mysql', 'Sách hướng dẫn lập trình web cơ bản.', 150000, 'php-book.jpg', 50),
-(2, 2, 'Bút Bi Thiên Long', 'but-bi-thien-long', 'Bút mực xanh, viết êm.', 5000, 'but-bi.jpg', 500),
-(3, 2, 'Sổ Tay Sinh Viên', 'so-tay-sinh-vien', 'Sổ tay bìa da cao cấp.', 45000, 'so-tay.jpg', 100),
-(4, 3, 'Khối Rubik 3x3', 'khoi-rubik-3x3', 'Đồ chơi phát triển trí tuệ.', 35000, 'rubik.jpg', 30);
+INSERT INTO products
+    (category_id, name, slug, author, price, sale_price, stock, badge, rating, sold_count, is_featured) VALUES
+(1, 'Đắc Nhân Tâm',          'dac-nhan-tam',         'Dale Carnegie',  89000,  NULL,   50, 'hot',  4.9, 1230, 1),
+(1, 'Nhà Giả Kim',            'nha-gia-kim',          'Paulo Coelho',   75000,  59000,  40, 'sale', 4.8,  980, 1),
+(1, 'Sapiens: Lược Sử Loài Người', 'sapiens',         'Yuval N. Harari',115000, 95000, 30, 'sale', 4.7,  750, 1),
+(1, 'Tôi Tài Giỏi, Bạn Cũng Thế','toi-tai-gioi',     'Adam Khoo',      79000,  NULL,   60, '',     4.6,  620, 0),
+(2, 'Thám Tử Conan tập 100',  'conan-tap-100',        'Gosho Aoyama',   25000,  NULL,  120, 'new',  4.8,  430, 1),
+(2, 'Doraemon tập 45',        'doraemon-tap-45',      'Fujiko F. Fujio',22000,  NULL,  100, '',     4.7,  380, 0),
+(2, 'Naruto tập 72',          'naruto-tap-72',        'Masashi Kishimoto',28000, NULL, 80, 'new',  4.9,  510, 1),
+(2, 'Dragon Ball tập 42',     'dragon-ball-tap-42',   'Akira Toriyama', 26000,  NULL,   70, '',     4.8,  290, 0),
+(3, 'Bút bi Thiên Long FO-03','but-thien-long',       'Thiên Long',     32000,  NULL,  200, '',     4.5,  840, 1),
+(3, 'Vở kẻ ngang 200 trang',  'vo-ke-ngang-200',      'Hồng Hà',        15000,  NULL,  300, '',     4.4,  920, 0),
+(3, 'Tẩy Staedtler Mars',     'tay-staedtler',        'Staedtler',      12000,  NULL,  150, 'new',  4.6,  410, 0),
+(4, 'Snack Oishi Tôm cay',    'snack-oishi-tom',      'Oishi',          72000,  58000, 80,  'sale', 4.5,  670, 1),
+(4, 'Kẹo dẻo gấu Haribo',    'keo-deo-haribo',       'Haribo',         45000,  NULL,  60,  'hot',  4.7,  320, 0),
+(5, 'Pepsi lon 330ml (thùng)','pepsi-lon-330',        'PepsiCo',        185000, 155000,40, 'sale', 4.6,  210, 1),
+(5, 'Trà xanh Không Độ chai', 'tra-xanh-khong-do',   'Tân Hiệp Phát',  15000,  NULL,  150, '',     4.4,  480, 0),
+(6, 'Rubik 3x3 Moyu',         'rubik-moyu-3x3',       'Moyu',           85000,  NULL,   40, 'new',  4.8,  190, 1),
+(6, 'Xếp hình 500 mảnh',      'xep-hinh-500',         'Ravensburger',   120000, 95000, 30, 'sale', 4.6,  140, 0);
 
--- Thêm tài khoản Admin (Mật khẩu: 123456 - Cần mã hóa MD5/Bcrypt trong thực tế)
-INSERT INTO `users` (`fullname`, `email`, `password`, `phone`, `role`) VALUES
-('Quản Trị Viên', 'admin@gtshop.com', '123456', '0987654321', 1),
-('Khách Hàng', 'khachhang@gmail.com', '123456', '0123456789', 0);
+INSERT INTO banners (title, subtitle, btn_text, btn_link, bg_color, sort_order) VALUES
+('🎓 Ưu đãi học sinh, sinh viên', 'Giảm thêm 10% cho văn phòng phẩm khi xuất trình thẻ SV', 'Mua ngay', '/gt_shop/?cat=van-phong-pham', '#2C1A0E', 1),
+('📚 Sách mới về hàng mỗi tuần',  'Cập nhật đầu sách hot nhất từ các NXB lớn',              'Khám phá', '/gt_shop/?cat=sach-van-hoc',   '#1D3A2A', 2);
+
+-- Tài khoản admin mặc định (password: admin123)
+INSERT INTO users (name, email, password, role) VALUES
+('Admin GT Shop', 'admin@gtshop.vn', '$2y$12$LcJYCqYlxvXHg6xJFbNineQGQHEqB3s.vmqsNz/IXtXQAVXMJI4Ny', 'admin');

@@ -8,7 +8,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($product['title']) ?> - G&T Shop</title>
-    <link rel="stylesheet" href="/G&T_shop/public/css/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="<?= BASE_URL ?>css/base.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>css/product.css">
 </head>
 <body>
     <?php include 'layouts/header.php'; ?>

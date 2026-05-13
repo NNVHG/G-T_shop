@@ -1,0 +1,35 @@
+/* ============================================================
+   G&T Shop — Home CSS (Dùng riêng Trang chủ)
+============================================================ */
+.hero { padding: 60px 0; background: var(--brown-dark); color: white; overflow: hidden; }
+.hero-inner { display: flex; align-items: center; justify-content: space-between; gap: 40px; }
+.hero-content { flex: 1; max-width: 500px; }
+.hero-title { font-family: 'Playfair Display', serif; font-size: 48px; color: var(--amber); line-height: 1.2; margin-bottom: 20px; }
+.hero-desc { font-size: 16px; color: rgba(255,255,255,0.7); margin-bottom: 30px; line-height: 1.6; }
+
+.hero-books { display: flex; gap: 15px; }
+.book-card { width: 90px; height: 130px; border-radius: 8px; padding: 10px; font-size: 13px; font-weight: bold; color: white; display: flex; align-items: flex-end; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+.b-green { background: linear-gradient(to bottom, #2E9B76, #1A6B4E); transform: translateY(20px); }
+.b-blue { background: linear-gradient(to bottom, #2176D8, #114D96); transform: translateY(40px); }
+.b-orange { background: linear-gradient(to bottom, #C95F31, #8C3B1A); }
+.b-purple { background: linear-gradient(to bottom, #8A72ED, #5A47A8); transform: translateY(30px); }
+
+.main-bg { background-color: var(--cream); border-top-left-radius: 40px; border-top-right-radius: 40px; padding: 50px 0; margin-top: -30px; position: relative; z-index: 2; }
+.section { margin-bottom: 60px; }
+.section-header { display: flex; align-items: center; margin-bottom: 30px; }
+.section-title { font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 700; color: var(--brown-dark); display: flex; align-items: center; width: 100%; }
+.section-title::after { content: ""; flex: 1; height: 1px; background: var(--border); margin-left: 20px; }
+
+/* Cat Grid */
+.cat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px; }
+.cat-card { background: white; border: 1px solid var(--border); border-radius: var(--radius-md); padding: 25px 15px; text-align: center; transition: 0.3s; display: flex; flex-direction: column; align-items: center;}
+.cat-card:hover { border-color: var(--amber); transform: translateY(-5px); box-shadow: var(--shadow-md); }
+.cat-icon { font-size: 32px; color: var(--amber-dark); margin-bottom: 15px; width: 60px; height: 60px; background: var(--cream-2); border-radius: 50%; display: flex; justify-content: center; align-items: center; }
+.cat-name { font-weight: 500; font-size: 15px; color: var(--brown-dark); }
+
+/* Banners */
+.banner-section { margin-top: 20px; }
+.banner-box { background: var(--brown-dark); color: white; border-radius: var(--radius-lg); padding: 40px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.banner-text h3 { font-family: 'Playfair Display', serif; color: var(--amber); font-size: 24px; margin-bottom: 10px; }
+.btn-banner { padding: 10px 25px; border: 1px solid rgba(255,255,255,0.3); border-radius: 8px; color: white; transition: 0.3s; }
+.btn-banner:hover { background: var(--amber); color: var(--brown-dark); border-color: var(--amber); }

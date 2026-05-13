@@ -9,24 +9,20 @@ use App\Models\Product;
 
 class HomeController {
     public function index() {
-        // 1. Kết nối CSDL
-        $database = new Database();
-        $db = $database->getConnection();
+    $database = new Database();
+    $db = $database->getConnection();
+    $productModel = new Product($db);
 
-        // 2. Khởi tạo Product Model và truyền kết nối vào
-        $productModel = new Product($db);
-        
-        // 3. Lấy danh sách sản phẩm
-        // Gán mảng rỗng [] nếu CSDL chưa có bảng/dữ liệu để frontend không bị crash
-        $products = [];
-        try {
-            $products = $productModel->getAllProducts();
-        } catch (\Exception $e) {
-            // Tạm thời bỏ qua lỗi nếu chưa tạo bảng 'products' trong MySQL
-        }
+    // Lấy dữ liệu theo đúng logic của file index.php gốc
+    $nav_categories = $productModel->getCategories();
+    $categories = $productModel->getCategoriesWithCount();
+    $featured = $productModel->getFeaturedProducts();
+    $newest = $productModel->getNewestProducts();
+    $banners = $productModel->getBanners();
+    $cart_count = isset($_SESSION['cart']) ? array_sum(array_column($_SESSION['cart'], 'qty')) : 0;
 
-        // 4. Gọi View (Lúc này biến $products đã tồn tại và được truyền ngầm xuống View)
-        require_once '../app/Views/client/home.php';
+    // Truyền dữ liệu sang View
+    require_once '../app/Views/client/home.php';
     }
 }
 ?>
