@@ -12,10 +12,10 @@ use App\Models\Order;
 use App\Models\Product;
 
 class ProfileController {
-    private $db;
-    private $userModel;
-    private $orderModel;
-    private $productModel;
+    private ?\PDO $db;
+    private User $userModel;
+    private Order $orderModel;
+    private Product $productModel;
 
     public function __construct() {
         if (!isset($_SESSION['user'])) {

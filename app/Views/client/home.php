@@ -1,5 +1,5 @@
 <?php
-/** * @var array $banners 
+/** * @var array $banners
  * @var array $categories
  * @var array $featured
  * @var array $newest

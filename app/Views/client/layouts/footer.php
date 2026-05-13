@@ -4,9 +4,6 @@
 ?>
 </main><!-- /site-main -->
 
-<!-- ═══════════════════════════════════════════════════════════
-     FOOTER
-════════════════════════════════════════════════════════════ -->
 <footer class="site-footer">
     <div class="container footer-grid">
 
@@ -26,8 +23,8 @@
         <div class="footer-col">
             <h4 class="footer-title">Danh mục</h4>
             <ul class="footer-links">
-                <?php foreach ($nav_categories as $c): ?>
-                    <li><a href="<?= BASE_URL ?>/?cat=<?= e($c['slug']) ?>"><?= e($c['name']) ?></a></li>
+                <?php foreach ($nav_categories ?? [] as $c): ?>
+                    <li><a href="<?= BASE_URL ?>index.php?controller=product&action=category&slug=<?= e($c['slug']) ?>"><?= e($c['name']) ?></a></li>
                 <?php endforeach; ?>
             </ul>
         </div>
@@ -72,7 +69,36 @@
 </footer>
 
 <!-- JavaScript chính -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="<?= BASE_URL ?>js/main.js"></script>
+<?php if(isset($_SESSION['toast_msg'])): ?>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: '<?= e($_SESSION['toast_msg']['type']) ?>',
+        title: '<?= e($_SESSION['toast_msg']['text']) ?>',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true
+    });
+});
+</script>
+<?php unset($_SESSION['toast_msg']); ?>
+<?php endif; ?>
+<?php if(isset($_SESSION['alert_msg'])): ?>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    Swal.fire({
+        icon: '<?= e($_SESSION['alert_msg']['type']) ?>',
+        title: '<?= e($_SESSION['alert_msg']['title']) ?>',
+        text: '<?= e($_SESSION['alert_msg']['text']) ?>'
+    });
+});
+</script>
+<?php unset($_SESSION['alert_msg']); ?>
+<?php endif; ?>
 <?= isset($extra_scripts) ? $extra_scripts : '' ?>
 </body>
 </html>

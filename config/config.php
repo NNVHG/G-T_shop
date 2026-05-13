@@ -23,4 +23,10 @@ function formatPrice(int $price): string {
 function e(string $str): string {
     return htmlspecialchars($str, ENT_QUOTES, 'UTF-8');
 }
+
+// Cấu hình VNPAY
+define('VNP_TMN_CODE', 'XLHKEVA9'); // Thay bằng Mã Website (TmnCode) của bạn
+define('VNP_HASH_SECRET', 'POOO24CO2FUU8PF8YSJJQKML2G174Y8M'); // Thay bằng Chuỗi bí mật
+define('VNP_URL', 'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html'); // URL API Sandbox
+define('VNP_RETURN_URL', BASE_URL . 'index.php?controller=checkout&action=vnpay_return');
 ?>

@@ -10,9 +10,9 @@ use App\Models\User;
 use App\Models\Product;
 
 class AuthController {
-    private $db;
-    private $userModel;
-    private $productModel;
+    private ?\PDO $db;
+    private User $userModel;
+    private Product $productModel;
 
     public function __construct() {
         $database = new Database();

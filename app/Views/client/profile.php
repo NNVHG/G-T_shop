@@ -75,9 +75,16 @@
 
             <div class="content-area">
                 <?php if(isset($_SESSION['profile_msg'])): ?>
-                    <div class="msg-alert msg-<?= $_SESSION['profile_msg']['type'] ?>">
-                        <?= $_SESSION['profile_msg']['text'] ?>
-                    </div>
+                    <script>
+                        document.addEventListener("DOMContentLoaded", function() {
+                            Swal.fire({
+                                icon: '<?= e($_SESSION['profile_msg']['type']) ?>',
+                                title: 'Thông báo',
+                                text: '<?= e($_SESSION['profile_msg']['text']) ?>',
+                                confirmButtonColor: '#5c4033'
+                            });
+                        });
+                    </script>
                     <?php unset($_SESSION['profile_msg']); ?>
                 <?php endif; ?>
 

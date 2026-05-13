@@ -39,6 +39,12 @@
         .summary-total { display: flex; justify-content: space-between; margin-top: 20px; padding-top: 20px; border-top: 1px dashed var(--border); font-size: 20px; font-weight: bold; color: var(--amber-dark); }
         .btn-checkout { display: block; width: 100%; text-align: center; background: var(--brown-dark); color: var(--amber); padding: 15px; border-radius: var(--radius-md); font-weight: 600; font-size: 16px; margin-top: 25px; transition: 0.3s; border: none; cursor: pointer;}
         .btn-checkout:hover { background: var(--amber); color: var(--brown-dark); }
+
+        .payment-methods { margin-top: 30px; }
+        .payment-methods h3 { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--brown-dark); margin-bottom: 15px; }
+        .payment-methods label { display: flex; align-items: center; gap: 10px; padding: 15px; border: 1px solid var(--border); border-radius: var(--radius-md); margin-bottom: 10px; cursor: pointer; transition: 0.3s; font-weight: 500; }
+        .payment-methods label:hover { border-color: var(--amber); background: var(--cream-2); }
+        .payment-methods input[type="radio"] { accent-color: var(--brown-dark); transform: scale(1.2); cursor: pointer; }
     </style>
 </head>
 <body>
@@ -68,6 +74,18 @@
                             <label for="note">Ghi chú đơn hàng (tùy chọn)</label>
                             <textarea id="note" name="note" placeholder="Ví dụ: Giao hàng giờ hành chính..."></textarea>
                         </div>
+
+                        <div class="payment-methods">
+                            <h3>Phương thức thanh toán</h3>
+                            <label>
+                                <input type="radio" name="payment_method" value="cod" checked> 
+                                Thanh toán khi nhận hàng (COD)
+                            </label>
+                            <label>
+                                <input type="radio" name="payment_method" value="vnpay"> 
+                                Thanh toán qua thẻ ATM / VNPAY
+                            </label>
+                        </div>
                     </form>
                 </div>
 
@@ -75,7 +93,7 @@
                     <h3 class="form-title">Đơn hàng của bạn (<?= $cart_count ?> sản phẩm)</h3>
                     
                     <div style="max-height: 350px; overflow-y: auto; padding-right: 10px; margin-bottom: 20px;">
-                        <?php foreach ($cart as $key => $item): ?>
+                        <?php foreach ($cart ?? [] as $key => $item): ?>
                             <div class="summary-item">
                                 <img src="<?= BASE_URL ?>images/<?= e($item['image']) ?>" alt="<?= e($item['name']) ?>" class="summary-item-img">
                                 <div class="summary-item-info">

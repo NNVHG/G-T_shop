@@ -30,7 +30,16 @@
         <div class="auth-container">
             <h1 class="auth-title">Đăng nhập</h1>
             <?php if (isset($error)): ?>
-                <div class="error-msg"><?= $error ?></div>
+                <script>
+                    document.addEventListener("DOMContentLoaded", function() {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Đăng nhập thất bại',
+                            text: '<?= e($error) ?>',
+                            confirmButtonColor: '#5c4033'
+                        });
+                    });
+                </script>
             <?php endif; ?>
             <form action="<?= BASE_URL ?>index.php?controller=auth&action=postLogin" method="POST">
                 <div class="form-group">

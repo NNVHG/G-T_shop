@@ -73,6 +73,11 @@ CREATE TABLE IF NOT EXISTS banners (
     sort_order INT          DEFAULT 0
 );
 
+ALTER TABLE orders 
+ADD COLUMN payment_method VARCHAR(50) DEFAULT 'cod' AFTER status,
+ADD COLUMN payment_status ENUM('unpaid', 'paid', 'failed') DEFAULT 'unpaid' AFTER payment_method,
+ADD COLUMN transaction_id VARCHAR(100) DEFAULT NULL AFTER payment_status;
+
 INSERT INTO categories (name, slug, icon, sort_order) VALUES
 ('Sách văn học',    'sach-van-hoc',    'ti-book',              1),
 ('Truyện tranh',    'truyen-tranh',    'ti-device-gamepad-2',  2),
@@ -108,3 +113,4 @@ INSERT INTO banners (title, subtitle, btn_text, btn_link, bg_color, sort_order) 
 -- Tài khoản admin mặc định (password: admin123)
 INSERT INTO users (name, email, password, role) VALUES
 ('Admin GT Shop', 'admin@gtshop.vn', '$2y$12$LcJYCqYlxvXHg6xJFbNineQGQHEqB3s.vmqsNz/IXtXQAVXMJI4Ny', 'admin');
+

@@ -28,9 +28,18 @@
 
     <main class="auth-page">
         <div class="auth-container">
-            <h1 class="auth-title">Đăng ký tài khoản</h1>
+            <h1 class="auth-title">Đăng ký</h1>
             <?php if (isset($error)): ?>
-                <div class="error-msg"><?= $error ?></div>
+                <script>
+                    document.addEventListener("DOMContentLoaded", function() {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Đăng ký thất bại',
+                            text: '<?= e($error) ?>',
+                            confirmButtonColor: '#5c4033'
+                        });
+                    });
+                </script>
             <?php endif; ?>
             <form action="<?= BASE_URL ?>index.php?controller=auth&action=postRegister" method="POST">
                 <div class="form-group">

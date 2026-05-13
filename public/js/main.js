@@ -4,17 +4,25 @@
 // ============================================================
 
 // ── Toast notification (thông báo nhanh) ─────────────────────
-function showToast(msg, icon = 'ti-check') {
-    let t = document.getElementById('toast');
-    if (!t) {
-        t = document.createElement('div');
-        t.id = 'toast';
-        document.body.appendChild(t);
-    }
-    t.innerHTML = `<i class="ti ${icon}"></i> ${msg}`;
-    t.classList.add('show');
-    clearTimeout(window._toastTimer);
-    window._toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
+function showToast(msg, icon = 'success') {
+    // Chuyển đổi icon class cũ sang dạng của SweetAlert2 nếu cần
+    let swalIcon = 'info';
+    if (icon.includes('check') || icon === 'success' || icon.includes('shopping-cart') || icon.includes('heart')) swalIcon = 'success';
+    if (icon.includes('alert') || icon === 'error') swalIcon = 'error';
+    if (icon.includes('wifi')) swalIcon = 'warning';
+
+    Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: swalIcon,
+        title: msg,
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        customClass: {
+            popup: 'colored-toast'
+        }
+    });
 }
 
 // ── Thêm vào giỏ hàng (gọi API add_to_cart.php) ──────────────

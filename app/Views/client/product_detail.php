@@ -146,7 +146,7 @@
             .then(res => res.json())
             .then(data => {
                 if(data.success) {
-                    alert('Đã thêm ' + qty + ' sản phẩm vào giỏ hàng!');
+                    showToast('Đã thêm ' + qty + ' sản phẩm vào giỏ hàng!', 'success');
                     let badge = document.querySelector('.cart-badge');
                     if (badge) {
                         badge.textContent = data.cart_count;
@@ -155,11 +155,22 @@
                     }
                 } else {
                     if (data.redirect) {
-                        if (confirm(data.message + "\nBạn có muốn chuyển đến trang đăng nhập không?")) {
-                            window.location.href = data.redirect;
-                        }
+                        Swal.fire({
+                            title: 'Yêu cầu đăng nhập',
+                            text: data.message + "\nBạn có muốn chuyển đến trang đăng nhập không?",
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#5c4033',
+                            cancelButtonColor: '#d33',
+                            confirmButtonText: 'Đăng nhập',
+                            cancelButtonText: 'Hủy'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = data.redirect;
+                            }
+                        });
                     } else {
-                        alert(data.message || 'Có lỗi xảy ra');
+                        showToast(data.message || 'Có lỗi xảy ra', 'error');
                     }
                 }
             });
