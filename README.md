@@ -44,6 +44,15 @@ Dự án được phân chia thành 2 phân hệ cốt lõi với đầy đủ n
     *   Cập nhật trạng thái đơn hàng theo chu kỳ: *Chờ xử lý (Pending) -> Đang giao (Shipped) -> Đã hoàn thành (Done) -> Đã hủy (Cancelled)*.
     *   Cập nhật trạng thái thanh toán đồng bộ.
 *   **Quản lý Người dùng (User Management):** Danh sách thành viên hệ thống và phân quyền bảo mật cấp cao (Role: `admin` hoặc `user`).
+---
+## 📷 Ảnh chụp giao diện trang chủ
+
+![](screenshot_home.png)
+
+---
+## 🎦 video demo trang web
+
+![Demo G&T Shop](Video_Demo.gif)
 
 ---
 

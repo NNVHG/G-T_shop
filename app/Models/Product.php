@@ -84,8 +84,11 @@ class Product {
         }
 
         if (!empty($keyword)) {
-            $sql .= " AND (p.name LIKE :keyword OR p.author LIKE :keyword OR p.description LIKE :keyword)";
-            $params['keyword'] = '%' . $keyword . '%';
+            $sql .= " AND (p.name LIKE :keyword1 OR p.author LIKE :keyword2 OR p.description LIKE :keyword3)";
+            $keyword_val = '%' . $keyword . '%';
+            $params['keyword1'] = $keyword_val;
+            $params['keyword2'] = $keyword_val;
+            $params['keyword3'] = $keyword_val;
         }
 
         if ($min_price !== null && $min_price !== '') {
