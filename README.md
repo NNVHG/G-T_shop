@@ -52,7 +52,7 @@ Dự án được phân chia thành 2 phân hệ cốt lõi với đầy đủ n
 
 ---
 ## 🎦 video demo trang web
-**[Link Video Demo]([https://drive.google.com/file/d/1_Be_q4IHbEDs0kH6FV0HypJv_4Vxj_tI/view?usp=sharing](https://drive.google.com/file/d/1hpwK7AMF1RTHyo4oy6Pw_J73Ll9OQQo4/view?usp=drive_link))**
+**[Link Video Demo](https://drive.google.com/file/d/1hpwK7AMF1RTHyo4oy6Pw_J73Ll9OQQo4/view?usp=drive_link)**
 
 ---
 
