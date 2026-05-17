@@ -25,47 +25,7 @@ function showToast(msg, icon = 'success') {
     });
 }
 
-// ── Thêm vào giỏ hàng (gọi API add_to_cart.php) ──────────────
-document.addEventListener('click', async function (e) {
-    const btn = e.target.closest('.btn-add-cart');
-    if (!btn) return;
-
-    const id  = btn.dataset.id;
-    const qty = 1;
-
-    try {
-        const res  = await fetch(`/gt_shop/cart_action.php`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: `action=add&product_id=${id}&qty=${qty}`
-        });
-        const data = await res.json();
-
-        if (data.success) {
-            showToast(`Đã thêm vào giỏ hàng!`, 'ti-shopping-cart');
-            // Cập nhật badge giỏ hàng
-            const badge = document.querySelector('.cart-badge');
-            if (badge) {
-                badge.textContent = data.cart_count;
-            } else {
-                const cartBtn = document.querySelector('.cart-btn');
-                if (cartBtn) {
-                    const span = document.createElement('span');
-                    span.className = 'cart-badge';
-                    span.textContent = data.cart_count;
-                    cartBtn.appendChild(span);
-                }
-            }
-            // Hiệu ứng nút
-            btn.innerHTML = '<i class="ti ti-check"></i>';
-            setTimeout(() => btn.innerHTML = '<i class="ti ti-plus"></i>', 1500);
-        } else {
-            showToast(data.message || 'Có lỗi xảy ra', 'ti-alert-circle');
-        }
-    } catch {
-        showToast('Không thể kết nối máy chủ', 'ti-wifi-off');
-    }
-});
+// (Legacy add_to_cart event listener removed to avoid duplicate network intercepts)
 
 // ── Wishlist (yêu thích) ──────────────────────────────────────
 document.addEventListener('click', async function (e) {
@@ -150,6 +110,10 @@ document.addEventListener('click', async function (e) {
     // 1. Nút Thêm vào giỏ hàng (Từ trang chủ hoặc chi tiết)
     const btnAdd = e.target.closest('.btn-add-cart');
     if (btnAdd) {
+        // NGĂN chặn hành vi chuyển hướng của .prod-card khi bấm vào nút thêm giỏ hàng
+        e.stopPropagation();
+        e.preventDefault();
+
         const id = btnAdd.dataset.id;
         const form = btnAdd.closest('form');
         
@@ -158,7 +122,6 @@ document.addEventListener('click', async function (e) {
 
         // Nếu người dùng bấm từ form chi tiết sản phẩm
         if (form && form.classList.contains('add-to-cart-form')) {
-            e.preventDefault();
             productId = form.querySelector('input[name="product_id"]').value;
             qty = form.querySelector('input[name="quantity"]').value;
         }
@@ -178,14 +141,32 @@ document.addEventListener('click', async function (e) {
                 const badge = document.querySelector('.cart-badge');
                 if (badge) {
                     badge.textContent = data.cart_count;
-                } else {
-                    const cartBtn = document.querySelector('.cart-btn');
-                    if (cartBtn) {
-                        cartBtn.innerHTML += `<span class="cart-badge">${data.cart_count}</span>`;
-                    }
                 }
+                
+                // Hiệu ứng đổi icon tạm thời sang dấu tick thành công
+                const oldHTML = btnAdd.innerHTML;
+                btnAdd.innerHTML = '<i class="ti ti-check"></i>';
+                setTimeout(() => btnAdd.innerHTML = oldHTML, 1500);
             } else {
-                showToast(data.message, 'ti-alert-circle');
+                if (data.redirect) {
+                    // Hiển thị hộp thoại SweetAlert2 yêu cầu đăng nhập sang trọng
+                    Swal.fire({
+                        title: 'Yêu cầu đăng nhập',
+                        text: data.message + "\nBạn có muốn chuyển đến trang đăng nhập không?",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#5c4033',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Đăng nhập',
+                        cancelButtonText: 'Hủy'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = data.redirect;
+                        }
+                    });
+                } else {
+                    showToast(data.message || 'Có lỗi xảy ra', 'ti-alert-circle');
+                }
             }
         } catch { showToast('Lỗi kết nối máy chủ', 'ti-wifi-off'); }
     }

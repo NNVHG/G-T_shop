@@ -87,6 +87,17 @@ switch ($controllerName) {
         }
         break;
 
+    case 'admin':
+        require_once '../app/Controllers/AdminController.php';
+        $controller = new \App\Controllers\AdminController();
+        if (method_exists($controller, $actionName)) {
+            $controller->$actionName();
+        } else {
+            $errorMessage = "Hành động (Action) '$actionName' không tồn tại trong AdminController!";
+            require_once '../app/Views/errors/404.php';
+        }
+        break;
+
     default:
         // Lỗi 404: Không tìm thấy Controller
         $errorMessage = "Bộ điều khiển (Controller) '$controllerName' không tồn tại trên hệ thống!";

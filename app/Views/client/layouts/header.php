@@ -20,6 +20,9 @@
                     <div class="action-btn text-link user-dropdown">
                         <i class="ti ti-user"></i> <span>Chào, <?= e($_SESSION['user']['name']) ?></span>
                         <div class="dropdown-content">
+                            <?php if (($_SESSION['user']['role'] ?? '') === 'admin'): ?>
+                                <a href="<?= BASE_URL ?>index.php?controller=admin&action=dashboard" style="font-weight: 700; color: var(--amber-dark);"><i class="ti ti-settings" style="font-size: 13px; margin-right: 4px;"></i> Trang quản trị</a>
+                            <?php endif; ?>
                             <a href="<?= BASE_URL ?>index.php?controller=profile">Trang cá nhân</a>
                             <a href="<?= BASE_URL ?>index.php?controller=auth&action=logout">Đăng xuất</a>
                         </div>
@@ -36,11 +39,9 @@
                         <i class="ti ti-user"></i> <span>Đăng nhập</span>
                     </a>
                 <?php endif; ?>
-                <a href="<?= BASE_URL ?>index.php?controller=cart" class="action-btn cart-btn">
+                <a href="<?= BASE_URL ?>index.php?controller=cart" class="action-btn cart-btn" style="position: relative;">
                     <i class="ti ti-shopping-cart"></i>
-                    <?php if (isset($cart_count) && $cart_count > 0): ?>
-                        <span class="cart-badge"><?= $cart_count ?></span>
-                    <?php endif; ?>
+                    <span class="cart-badge"><?= isset($_SESSION['cart']) ? array_sum(array_column($_SESSION['cart'], 'qty')) : 0 ?></span>
                 </a>
             </div>
         </div>

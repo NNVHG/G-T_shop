@@ -56,7 +56,7 @@
                 <div class="section-header"><h2 class="section-title">Sản phẩm nổi bật</h2></div>
                 <div class="product-grid">
                     <?php foreach ($featured as $p): ?>
-                        <div class="prod-card" onclick="location.href='<?= BASE_URL ?>index.php?controller=product&action=detail&id=<?= $p['id'] ?>'">
+                        <div class="prod-card" onclick="if (!event.target.closest('.btn-add-cart')) location.href='<?= BASE_URL ?>index.php?controller=product&action=detail&id=<?= $p['id'] ?>'">
                             <?php if (!empty($p['badge'])): ?>
                                 <div class="badge <?= $p['badge'] ?>">
                                     <?php 

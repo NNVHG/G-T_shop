@@ -1,0 +1,10 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    
+    # If root is accessed, internally rewrite to public/
+    RewriteRule ^$ public/ [L]
+    
+    # If the request is not already pointing to public/, forward it to public/
+    RewriteCond %{REQUEST_URI} !^/G&T_shop/public/
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>

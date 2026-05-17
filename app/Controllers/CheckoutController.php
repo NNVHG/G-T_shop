@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Controllers;
 
 require_once '../app/Models/Database.php';
@@ -10,20 +11,23 @@ use App\Models\Order;
 use App\Models\Product;
 use PDO;
 
-class CheckoutController {
-    
+class CheckoutController
+{
+
     private ?PDO $db = null;
     private Order $orderModel;
     private Product $productModel;
 
-    public function __construct() {
+    public function __construct()
+    {
         $database = new Database();
         $this->db = $database->getConnection();
         $this->orderModel = new Order($this->db);
         $this->productModel = new Product($this->db);
     }
 
-    public function index() {
+    public function index()
+    {
         $cart = $_SESSION['cart'] ?? [];
         if (empty($cart)) {
             header("Location: " . BASE_URL . "index.php?controller=cart");
@@ -32,7 +36,7 @@ class CheckoutController {
 
         $nav_categories = $this->productModel->getCategories();
         $cart_count = array_sum(array_column($cart, 'qty'));
-        $total_amount = array_sum(array_map(function($item) {
+        $total_amount = array_sum(array_map(function ($item) {
             return $item['price'] * $item['qty'];
         }, $cart));
 
@@ -40,7 +44,8 @@ class CheckoutController {
     }
 
     // Xử lý khi form checkout được submit (Action: place)
-    public function place() {
+    public function place()
+    {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             header('Location: ' . \BASE_URL . 'index.php?controller=checkout');
             exit;
@@ -48,8 +53,8 @@ class CheckoutController {
 
         $payment_method = $_POST['payment_method'] ?? 'cod';
         // Lấy ID user (nếu đã đăng nhập, mặc định là 0 nếu mua dạng khách)
-        $userId = $_SESSION['user']['id'] ?? 0; 
-        
+        $userId = $_SESSION['user']['id'] ?? 0;
+
         if (empty($_SESSION['cart'])) {
             header('Location: ' . \BASE_URL . 'index.php?controller=cart');
             exit;
@@ -57,7 +62,7 @@ class CheckoutController {
 
         // 2. Khắc phục lỗi Undefined variable '$result' bằng cách mở comment và gọi hàm thực tế
         $result = $this->orderModel->placeOrder($_POST, $_SESSION['cart'], $userId);
-        
+
         // Kiểm tra an toàn xem có tạo đơn thành công không
         if (!$result || !isset($result['order_id'])) {
             $_SESSION['error'] = 'Có lỗi xảy ra khi tạo đơn hàng!';
@@ -65,11 +70,11 @@ class CheckoutController {
             exit;
         }
 
-        $orderId = $result['order_id']; 
-        $totalAmount = $result['total']; 
+        $orderId = $result['order_id'];
+        $totalAmount = $result['total'];
 
         if ($payment_method === 'vnpay') {
-            
+
             $vnp_Url = \VNP_URL;
             $vnp_Returnurl = \VNP_RETURN_URL;
             $vnp_TmnCode = \VNP_TMN_CODE;
@@ -80,9 +85,9 @@ class CheckoutController {
             $vnp_OrderType = 'billpayment';
             $vnp_Amount = $totalAmount * 100;
             $vnp_Locale = 'vn';
-            
+
             $vnp_IpAddr = $_SERVER['REMOTE_ADDR'];
-            if($vnp_IpAddr === '::1' || $vnp_IpAddr === '127.0.0.1') {
+            if ($vnp_IpAddr === '::1' || $vnp_IpAddr === '127.0.0.1') {
                 $vnp_IpAddr = '127.0.0.1';
             }
 
@@ -136,7 +141,13 @@ class CheckoutController {
         exit;
     }
 
-    public function vnpayReturn() {
+    public function vnpay_return()
+    {
+        $this->vnpayReturn();
+    }
+
+    public function vnpayReturn()
+    {
         $vnp_SecureHash = $_GET['vnp_SecureHash'] ?? '';
         $inputData = array();
         foreach ($_GET as $key => $value) {
@@ -176,5 +187,19 @@ class CheckoutController {
             header('Location: ' . \BASE_URL . 'index.php?controller=checkout');
         }
         exit;
+    }
+
+    public function process()
+    {
+        $this->place();
+    }
+
+    public function success()
+    {
+        $nav_categories = $this->productModel->getCategories();
+        $cart = $_SESSION['cart'] ?? [];
+        $cart_count = array_sum(array_column($cart, 'qty'));
+
+        require_once '../app/Views/client/success.php';
     }
 }
