@@ -46,13 +46,14 @@ Dự án được phân chia thành 2 phân hệ cốt lõi với đầy đủ n
 *   **Quản lý Người dùng (User Management):** Danh sách thành viên hệ thống và phân quyền bảo mật cấp cao (Role: `admin` hoặc `user`).
 ---
 ## 📷 Ảnh chụp giao diện trang chủ
-
-![](screenshot_home.png)
+<img width="1857" height="986" alt="image" src="https://github.com/user-attachments/assets/a1968253-118d-47e6-8ba2-843b1c96d0c6" />
+<img width="1856" height="980" alt="image" src="https://github.com/user-attachments/assets/57253348-9af3-4f35-9bb0-4bdcd6b12bd7" />
+<img width="1858" height="983" alt="image" src="https://github.com/user-attachments/assets/bc9a10ca-e770-4514-bbf4-d8358911be80" />
 
 ---
 ## 🎦 video demo trang web
 
-![Demo G&T Shop](Video_Demo.gif)
+![Demo G&T Shop]([Video_Demo.gif](https://drive.google.com/file/d/1hpwK7AMF1RTHyo4oy6Pw_J73Ll9OQQo4/view?usp=drive_link))
 
 ---
 
