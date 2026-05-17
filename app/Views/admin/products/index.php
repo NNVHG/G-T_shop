@@ -1,14 +1,72 @@
 <?php
 /**
  * @var array $products
+ * @var array $categories
+ * @var string $search
+ * @var int $category_id
+ * @var string $status
  * @var string $title
  */
 $content_view = '../app/Views/admin/products/index.php';
 ?>
-<div style="margin-bottom: 20px; display: flex; justify-content: flex-end;">
-    <a href="<?= BASE_URL ?>index.php?controller=admin&action=productCreate" class="btn btn-gold">
-        <i class="ti ti-plus"></i> Thêm sản phẩm mới
-    </a>
+
+<!-- FILTER, SEARCH & CREATE PANEL -->
+<div style="background: var(--bg-panel); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 22px; margin-bottom: 25px; box-shadow: var(--shadow-sm);">
+    <form method="GET" action="<?= BASE_URL ?>index.php" style="display: flex; gap: 15px; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; width: 100%;">
+        <div style="display: flex; gap: 15px; flex-wrap: wrap; align-items: flex-end; flex: 1;">
+            <input type="hidden" name="controller" value="admin">
+            <input type="hidden" name="action" value="products">
+
+            <!-- Search Input -->
+            <div style="flex: 1; min-width: 250px;">
+                <label style="display: block; font-size: 11px; font-weight: 700; margin-bottom: 8px; color: var(--text-2); text-transform: uppercase; letter-spacing: .05em;">Tìm kiếm sản phẩm</label>
+                <div style="position: relative; display: flex; align-items: center;">
+                    <i class="ti ti-search" style="position: absolute; left: 14px; color: var(--text-3); font-size: 16px;"></i>
+                    <input type="text" name="search" value="<?= htmlspecialchars($search ?? '') ?>" placeholder="Nhập tên sản phẩm, tác giả hoặc ID..." style="width: 100%; padding: 10px 14px 10px 40px; background: var(--bg-panel); border: 1px solid var(--border); border-radius: var(--radius-md); font-size: 13.5px; color: var(--text-1); outline: none;">
+                </div>
+            </div>
+
+            <!-- Category Filter -->
+            <div style="width: 200px; min-width: 150px;">
+                <label style="display: block; font-size: 11px; font-weight: 700; margin-bottom: 8px; color: var(--text-2); text-transform: uppercase; letter-spacing: .05em;">Danh mục</label>
+                <select name="category_id" style="width: 100%; padding: 10px 14px; background: var(--bg-panel); border: 1px solid var(--border); border-radius: var(--radius-md); font-size: 13.5px; color: var(--text-1); outline: none; cursor: pointer;">
+                    <option value="0">--- Tất cả danh mục ---</option>
+                    <?php foreach ($categories as $cat): ?>
+                        <option value="<?= $cat['id'] ?>" <?= (isset($category_id) && $category_id === (int)$cat['id']) ? 'selected' : '' ?>><?= htmlspecialchars($cat['name']) ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+
+            <!-- Status Filter -->
+            <div style="width: 180px; min-width: 130px;">
+                <label style="display: block; font-size: 11px; font-weight: 700; margin-bottom: 8px; color: var(--text-2); text-transform: uppercase; letter-spacing: .05em;">Trạng thái hiển thị</label>
+                <select name="status" style="width: 100%; padding: 10px 14px; background: var(--bg-panel); border: 1px solid var(--border); border-radius: var(--radius-md); font-size: 13.5px; color: var(--text-1); outline: none; cursor: pointer;">
+                    <option value="all" <?= (!isset($status) || $status === 'all') ? 'selected' : '' ?>>Tất cả trạng thái</option>
+                    <option value="active" <?= (isset($status) && $status === 'active') ? 'selected' : '' ?>>Hiển thị (Hiển thị)</option>
+                    <option value="inactive" <?= (isset($status) && $status === 'inactive') ? 'selected' : '' ?>>Ẩn (Ẩn)</option>
+                </select>
+            </div>
+
+            <!-- Actions Buttons -->
+            <div style="display: flex; gap: 8px; height: 40px; align-items: flex-end;">
+                <button type="submit" class="btn btn-gold" style="padding: 10px 20px; font-size: 13px; font-weight: 700; border-radius: var(--radius-md); height: 40px; display: flex; align-items: center; gap: 6px;">
+                    <i class="ti ti-filter" style="font-size: 15px;"></i> Tìm kiếm
+                </button>
+                <?php if (!empty($search) || (isset($category_id) && $category_id > 0) || (isset($status) && $status !== 'all')): ?>
+                    <a href="<?= BASE_URL ?>index.php?controller=admin&action=products" class="btn" style="padding: 10px 20px; font-size: 13px; font-weight: 600; border-radius: var(--radius-md); height: 40px; display: flex; align-items: center; background: var(--border); border-color: var(--border); color: var(--text-1);">
+                        Đặt lại
+                    </a>
+                <?php endif; ?>
+            </div>
+        </div>
+
+        <!-- Add Product Button (Aligned to the right / bottom-right on wrap) -->
+        <div style="height: 40px; display: flex; align-items: flex-end; margin-left: auto;">
+            <a href="<?= BASE_URL ?>index.php?controller=admin&action=productCreate" class="btn btn-gold" style="padding: 10px 20px; font-size: 13px; font-weight: 700; border-radius: var(--radius-md); height: 40px; display: flex; align-items: center; gap: 6px; background: var(--brown-dark); color: var(--gold-bright); border-color: var(--brown-dark);">
+                <i class="ti ti-plus" style="font-size: 15px;"></i> Thêm sản phẩm mới
+            </a>
+        </div>
+    </form>
 </div>
 
 <div class="admin-table-wrap">
@@ -33,7 +91,11 @@ $content_view = '../app/Views/admin/products/index.php';
         <tbody>
             <?php if (empty($products)): ?>
                 <tr>
-                    <td colspan="9" style="text-align: center; color: var(--text-3); padding: 30px;">Không có sản phẩm nào trên hệ thống.</td>
+                    <td colspan="9" style="text-align: center; color: var(--text-3); padding: 50px 30px;">
+                        <i class="ti ti-search-off" style="font-size: 40px; display: block; margin-bottom: 12px; color: var(--border-mid);"></i>
+                        <div style="font-size: 15px; font-weight: 700; color: var(--brown-dark); margin-bottom: 6px;">Không tìm thấy sản phẩm nào!</div>
+                        <div style="font-size: 13px; color: var(--text-3);">Không có sản phẩm nào khớp với bộ lọc tìm kiếm hiện tại của bạn.</div>
+                    </td>
                 </tr>
             <?php else: ?>
                 <?php foreach ($products as $p): ?>

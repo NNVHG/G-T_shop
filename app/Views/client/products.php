@@ -26,7 +26,7 @@
         
         .product-card { background: var(--white); border-radius: var(--radius-lg); padding: 15px; text-align: center; border: 1px solid var(--border); transition: 0.3s; display: flex; flex-direction: column; justify-content: space-between;}
         .product-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); border-color: var(--amber-dark); }
-        .product-img { width: 100%; height: 200px; object-fit: cover; border-radius: var(--radius-md); margin-bottom: 15px; border: 1px solid var(--cream-2);}
+        .product-img { width: 100%; height: 200px; object-fit: contain; background: var(--cream-2); border-radius: var(--radius-md); margin-bottom: 15px; border: 1px solid var(--cream-2); display: block; }
         .product-name { font-size: 16px; font-weight: 600; color: var(--brown-dark); text-decoration: none; margin-bottom: 10px; display: block; line-height: 1.4; height: 44px; overflow: hidden; }
         .product-price { color: var(--amber-dark); font-weight: bold; font-size: 18px; margin-bottom: 15px; }
         .btn-add-cart { display: inline-block; padding: 10px 20px; background: var(--amber); color: var(--brown-dark); border-radius: var(--radius-sm); font-weight: 600; text-decoration: none; transition: 0.3s; border: none; cursor: pointer; width: 100%;}

@@ -113,8 +113,51 @@ class AdminController {
     public function products() {
         $this->requireAdmin();
 
-        $stmt = $this->db->query("SELECT p.*, c.name as category_name FROM products p JOIN categories c ON p.category_id = c.id ORDER BY p.id DESC");
+        $search = isset($_GET['search']) ? trim($_GET['search']) : '';
+        $category_id = isset($_GET['category_id']) ? (int)$_GET['category_id'] : 0;
+        $status = isset($_GET['status']) ? trim($_GET['status']) : 'all';
+
+        $query = "SELECT p.*, c.name as category_name FROM products p JOIN categories c ON p.category_id = c.id WHERE 1=1";
+        $params = [];
+
+        if (!empty($search)) {
+            if (is_numeric($search)) {
+                $query .= " AND (p.id = ? OR p.name LIKE ? OR p.author LIKE ? OR p.slug LIKE ?)";
+                $params[] = (int)$search;
+                $params[] = "%$search%";
+                $params[] = "%$search%";
+                $params[] = "%$search%";
+            } elseif (strpos($search, '#') === 0 && is_numeric(substr($search, 1))) {
+                $query .= " AND p.id = ?";
+                $params[] = (int)substr($search, 1);
+            } else {
+                $query .= " AND (p.name LIKE ? OR p.author LIKE ? OR p.slug LIKE ?)";
+                $params[] = "%$search%";
+                $params[] = "%$search%";
+                $params[] = "%$search%";
+            }
+        }
+
+        if ($category_id > 0) {
+            $query .= " AND p.category_id = ?";
+            $params[] = $category_id;
+        }
+
+        if ($status === 'active') {
+            $query .= " AND p.is_active = 1";
+        } elseif ($status === 'inactive') {
+            $query .= " AND p.is_active = 0";
+        }
+
+        $query .= " ORDER BY p.id DESC";
+
+        $stmt = $this->db->prepare($query);
+        $stmt->execute($params);
         $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // Fetch categories for filtering
+        $stmt = $this->db->query("SELECT * FROM categories ORDER BY sort_order");
+        $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         $title = 'Quản lý Sản phẩm';
         $content_view = '../app/Views/admin/products/index.php';

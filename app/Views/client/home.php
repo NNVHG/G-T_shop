@@ -4,6 +4,9 @@
  * @var array $featured
  * @var array $newest
  */
+$banners = $banners ?? [];
+$categories = $categories ?? [];
+$featured = $featured ?? [];
 ?>
 <!DOCTYPE html>
 <html lang="vi">
@@ -71,7 +74,11 @@
                             <?php endif; ?>
 
                             <div class="prod-img-wrap">
-                                <span class="prod-img-placeholder"><i class="ti ti-book-2"></i></span>
+                                <?php if (!empty($p['image']) && $p['image'] !== 'default.jpg'): ?>
+                                    <img src="<?= BASE_URL ?>images/<?= e($p['image']) ?>" alt="<?= e($p['name']) ?>">
+                                <?php else: ?>
+                                    <span class="prod-img-placeholder"><i class="ti ti-book-2"></i></span>
+                                <?php endif; ?>
                             </div>
                             
                             <div class="prod-info">
@@ -102,11 +109,11 @@
             </div>
         </section>
 
-        <?php if ($banners): ?>
+        <?php if (!empty($banners)): ?>
         <section class="section banner-section">
             <div class="container">
                 <?php foreach ($banners as $b): ?>
-                    <div class="banner-box">
+                    <div class="banner-box" style="background: <?= e($b['bg_color'] ?? 'var(--brown-dark)') ?>;">
                         <div class="banner-text">
                             <h3><?= e($b['title']) ?></h3>
                             <p><?= e($b['subtitle']) ?></p>
