@@ -46,9 +46,8 @@ Dự án được phân chia thành 2 phân hệ cốt lõi với đầy đủ n
 *   **Quản lý Người dùng (User Management):** Danh sách thành viên hệ thống và phân quyền bảo mật cấp cao (Role: `admin` hoặc `user`).
 ---
 ## 📷 Ảnh chụp giao diện trang chủ
-<img width="1857" height="986" alt="image" src="https://github.com/user-attachments/assets/a1968253-118d-47e6-8ba2-843b1c96d0c6" />
-<img width="1856" height="980" alt="image" src="https://github.com/user-attachments/assets/57253348-9af3-4f35-9bb0-4bdcd6b12bd7" />
-<img width="1858" height="983" alt="image" src="https://github.com/user-attachments/assets/bc9a10ca-e770-4514-bbf4-d8358911be80" />
+<img width="1851" height="2684" alt="image" src="https://github.com/user-attachments/assets/13b22a58-18b5-4d18-8481-c9f0a467f505" />
+
 
 ---
 ## 🎦 video demo trang web
