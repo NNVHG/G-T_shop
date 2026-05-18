@@ -170,8 +170,8 @@ Dự án đã tích hợp sẵn luồng thanh toán qua ví điện tử **VNPAY
 
 ### 1. Thông số tích hợp mặc định (Đã cấu hình trong `config/config.php`)
 ```php
-define('VNP_TMN_CODE', 'XLHKEVA9'); // Mã Website thử nghiệm
-define('VNP_HASH_SECRET', 'POOO24CO2FUU8PF8YSJJQKML2G174Y8M'); // Chuỗi bí mật tạo chữ ký bảo mật
+define('VNP_TMN_CODE', ''); // Mã Website thử nghiệm
+define('VNP_HASH_SECRET', ''); // Chuỗi bí mật tạo chữ ký bảo mật
 define('VNP_URL', 'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html'); // Đường dẫn cổng thanh toán giả lập
 ```
 
